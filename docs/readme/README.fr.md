@@ -2,19 +2,19 @@
 
 <div align="center">
 
-# Palmier Pro
+# Filmidi Pro
 
 **L'éditeur vidéo conçu pour l'IA.**
 
-<a href="https://github.com/palmier-io/palmier-pro/releases/latest/download/PalmierPro.dmg">
-  <img src="../../assets/macos-badge.png" alt="Télécharger Palmier Pro pour macOS" width="180" />
+<a href="https://github.com/filmidi-io/filmidi-pro/releases/latest/download/FilmidiPro.dmg">
+  <img src="../../assets/macos-badge.png" alt="Télécharger Filmidi Pro pour macOS" width="180" />
 </a>
 
 <sub><i>Nécessite macOS 26 (Tahoe) sur Apple Silicon</i></sub>
 
-<a href="https://x.com/Palmier_io"><img src="https://img.shields.io/badge/Follow-%40Palmier__io-000000?style=flat&logo=x&logoColor=white" alt="Suivre sur X" /></a>
+<a href="https://x.com/Filmidi_io"><img src="https://img.shields.io/badge/Follow-%40Filmidi__io-000000?style=flat&logo=x&logoColor=white" alt="Suivre sur X" /></a>
 <a href="https://discord.com/invite/SMVW6pKYmg"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Rejoindre Discord" /></a>
-<a href="https://www.ycombinator.com/companies/palmier"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
+<a href="https://www.ycombinator.com/companies/filmidi"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
 
 <p>
   <a href="../../README.md">English</a> ·
@@ -36,15 +36,15 @@
 
 </div>
 
-<img src="../../assets/palmier-ui.png" alt="Interface de Palmier Pro" width="900" />
+<img src="../../assets/filmidi-ui.png" alt="Interface de Filmidi Pro" width="900" />
 
 ---
 
-Palmier Pro est un éditeur vidéo open source pour Mac. Vous et votre agent pouvez générer et monter des vidéos ensemble dans la timeline.
+Filmidi Pro est un éditeur vidéo open source pour Mac. Vous et votre agent pouvez générer et monter des vidéos ensemble dans la timeline.
 
 ### Éditeur vidéo natif Swift
 
-Nous avons construit Palmier Pro de zéro avec Swift. La référence est Premiere Pro, avec notre façon d'intégrer l'IA dans le workflow.
+Nous avons construit Filmidi Pro de zéro avec Swift. La référence est Premiere Pro, avec notre façon d'intégrer l'IA dans le workflow.
 
 ### IA générative intégrée
 
@@ -60,12 +60,12 @@ Lorsque l'app est ouverte, elle expose un serveur MCP à `http://127.0.0.1:19789
 
 **Claude Code**
 ```bash
-claude mcp add --transport http palmier-pro http://127.0.0.1:19789/mcp
+claude mcp add --transport http filmidi-pro http://127.0.0.1:19789/mcp
 ```
 
 **Codex**
 ```bash
-codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
+codex mcp add filmidi-pro --url http://127.0.0.1:19789/mcp
 ```
 
 **Cursor**
@@ -75,7 +75,7 @@ Le plus simple est d'ouvrir dans l'app `Help` -> `MCP Instructions` -> `Install 
 ```
 {
   "mcpServers": {
-    "palmier-pro": {
+    "filmidi-pro": {
       "type": "http",
       "url": "http://127.0.0.1:19789/mcp"
     }
@@ -89,7 +89,7 @@ Nous fournissons un [mcpb](https://github.com/modelcontextprotocol/mcpb) avec l'
 
 ## FAQ
 
-**Palmier Pro est-il entièrement open source ?**
+**Filmidi Pro est-il entièrement open source ?**
 
 L'éditeur vidéo, sans les fonctions d'IA générative, est entièrement open source. Le serveur MCP et le chat de l'agent sont aussi open source. La seule partie closed source est le traitement d'IA générative.
 
@@ -112,22 +112,22 @@ Voir [CONTRIBUTING.md](../../CONTRIBUTING.md).
 ## Communauté et support
 
 - **Discord :** Rejoignez la communauté sur **[Discord](https://discord.com/invite/SMVW6pKYmg)**.
-- **Twitter / X :** Suivez **[@Palmier_io](https://x.com/Palmier_io)** pour les mises à jour et annonces.
-- **Instagram :** Suivez [@palmier.io](https://www.instagram.com/palmier.io).
-- **Feedback et support :** Créez une [GitHub Issue](https://github.com/palmier-io/palmier-pro/issues) ou envoyez-nous un email à founders@palmier.io.
+- **Twitter / X :** Suivez **[@Filmidi_io](https://x.com/Filmidi_io)** pour les mises à jour et annonces.
+- **Instagram :** Suivez [@filmidi.io](https://www.instagram.com/filmidi.io).
+- **Feedback et support :** Créez une [GitHub Issue](https://github.com/filmidi-io/filmidi-pro/issues) ou envoyez-nous un email à founders@filmidi.io.
 
 ## Star History
 
-<a href="https://www.star-history.com/?type=date&repos=palmier-io%2Fpalmier-pro">
+<a href="https://www.star-history.com/?type=date&repos=filmidi-io%2Ffilmidi-pro">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
-   <img alt="Graphique Star History" src="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
+   <img alt="Graphique Star History" src="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## Licence
 
-Copyright (C) 2026 Palmier, Inc.
+Copyright (C) 2026 Filmidi, Inc.
 
-Palmier Pro est open source sous [GPLv3](../../LICENSE).
+Filmidi Pro est open source sous [GPLv3](../../LICENSE).

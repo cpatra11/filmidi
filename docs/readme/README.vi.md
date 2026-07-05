@@ -2,19 +2,19 @@
 
 <div align="center">
 
-# Palmier Pro
+# Filmidi Pro
 
 **Trình biên tập video được xây dựng cho AI.**
 
-<a href="https://github.com/palmier-io/palmier-pro/releases/latest/download/PalmierPro.dmg">
-  <img src="../../assets/macos-badge.png" alt="Tải Palmier Pro cho macOS" width="180" />
+<a href="https://github.com/filmidi-io/filmidi-pro/releases/latest/download/FilmidiPro.dmg">
+  <img src="../../assets/macos-badge.png" alt="Tải Filmidi Pro cho macOS" width="180" />
 </a>
 
 <sub><i>Yêu cầu macOS 26 (Tahoe) trên Apple Silicon</i></sub>
 
-<a href="https://x.com/Palmier_io"><img src="https://img.shields.io/badge/Follow-%40Palmier__io-000000?style=flat&logo=x&logoColor=white" alt="Theo dõi trên X" /></a>
+<a href="https://x.com/Filmidi_io"><img src="https://img.shields.io/badge/Follow-%40Filmidi__io-000000?style=flat&logo=x&logoColor=white" alt="Theo dõi trên X" /></a>
 <a href="https://discord.com/invite/SMVW6pKYmg"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Tham gia Discord" /></a>
-<a href="https://www.ycombinator.com/companies/palmier"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
+<a href="https://www.ycombinator.com/companies/filmidi"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
 
 <p>
   <a href="../../README.md">English</a> ·
@@ -36,15 +36,15 @@
 
 </div>
 
-<img src="../../assets/palmier-ui.png" alt="Giao diện Palmier Pro" width="900" />
+<img src="../../assets/filmidi-ui.png" alt="Giao diện Filmidi Pro" width="900" />
 
 ---
 
-Palmier Pro là trình biên tập video mã nguồn mở cho Mac. Bạn và agent của bạn có thể cùng tạo và chỉnh sửa video ngay trong timeline.
+Filmidi Pro là trình biên tập video mã nguồn mở cho Mac. Bạn và agent của bạn có thể cùng tạo và chỉnh sửa video ngay trong timeline.
 
 ### Trình biên tập video thuần Swift
 
-Chúng tôi xây dựng Palmier Pro từ đầu bằng Swift. Mốc tham chiếu là Premiere Pro, với cách riêng của chúng tôi để tích hợp AI vào quy trình làm việc.
+Chúng tôi xây dựng Filmidi Pro từ đầu bằng Swift. Mốc tham chiếu là Premiere Pro, với cách riêng của chúng tôi để tích hợp AI vào quy trình làm việc.
 
 ### AI tạo sinh tích hợp sẵn
 
@@ -56,16 +56,16 @@ Kết nối Claude, Codex hoặc Cursor qua MCP, hoặc dùng agent trong app đ
 
 ## MCP server
 
-Khi app đang mở, Palmier Pro cung cấp MCP server tại `http://127.0.0.1:19789/mcp` qua HTTP. Cách kết nối:
+Khi app đang mở, Filmidi Pro cung cấp MCP server tại `http://127.0.0.1:19789/mcp` qua HTTP. Cách kết nối:
 
 **Claude Code**
 ```bash
-claude mcp add --transport http palmier-pro http://127.0.0.1:19789/mcp
+claude mcp add --transport http filmidi-pro http://127.0.0.1:19789/mcp
 ```
 
 **Codex**
 ```bash
-codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
+codex mcp add filmidi-pro --url http://127.0.0.1:19789/mcp
 ```
 
 **Cursor**
@@ -75,7 +75,7 @@ Cách dễ nhất là mở `Help` -> `MCP Instructions` -> `Install in Cursor` t
 ```
 {
   "mcpServers": {
-    "palmier-pro": {
+    "filmidi-pro": {
       "type": "http",
       "url": "http://127.0.0.1:19789/mcp"
     }
@@ -89,7 +89,7 @@ Chúng tôi đóng gói một [mcpb](https://github.com/modelcontextprotocol/mcp
 
 ## FAQ
 
-**Palmier Pro có hoàn toàn mã nguồn mở không?**
+**Filmidi Pro có hoàn toàn mã nguồn mở không?**
 
 Trình biên tập video, không bao gồm các tính năng AI tạo sinh, hoàn toàn là mã nguồn mở. MCP server và agent chat cũng là mã nguồn mở. Phần duy nhất đóng nguồn là xử lý AI tạo sinh.
 
@@ -112,22 +112,22 @@ Xem [CONTRIBUTING.md](../../CONTRIBUTING.md).
 ## Cộng đồng và hỗ trợ
 
 - **Discord:** Tham gia cộng đồng trên **[Discord](https://discord.com/invite/SMVW6pKYmg)**.
-- **Twitter / X:** Theo dõi **[@Palmier_io](https://x.com/Palmier_io)** để nhận cập nhật và thông báo.
-- **Instagram:** Theo dõi [@palmier.io](https://www.instagram.com/palmier.io).
-- **Phản hồi và hỗ trợ:** Tạo [GitHub Issue](https://github.com/palmier-io/palmier-pro/issues) hoặc gửi email tới founders@palmier.io.
+- **Twitter / X:** Theo dõi **[@Filmidi_io](https://x.com/Filmidi_io)** để nhận cập nhật và thông báo.
+- **Instagram:** Theo dõi [@filmidi.io](https://www.instagram.com/filmidi.io).
+- **Phản hồi và hỗ trợ:** Tạo [GitHub Issue](https://github.com/filmidi-io/filmidi-pro/issues) hoặc gửi email tới founders@filmidi.io.
 
 ## Star History
 
-<a href="https://www.star-history.com/?type=date&repos=palmier-io%2Fpalmier-pro">
+<a href="https://www.star-history.com/?type=date&repos=filmidi-io%2Ffilmidi-pro">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
-   <img alt="Biểu đồ Star History" src="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
+   <img alt="Biểu đồ Star History" src="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## Giấy phép
 
-Copyright (C) 2026 Palmier, Inc.
+Copyright (C) 2026 Filmidi, Inc.
 
-Palmier Pro là mã nguồn mở theo [GPLv3](../../LICENSE).
+Filmidi Pro là mã nguồn mở theo [GPLv3](../../LICENSE).

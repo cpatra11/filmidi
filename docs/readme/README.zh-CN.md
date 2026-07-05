@@ -2,19 +2,19 @@
 
 <div align="center">
 
-# Palmier Pro
+# Filmidi Pro
 
 **专为 AI 打造的视频编辑器。**
 
-<a href="https://github.com/palmier-io/palmier-pro/releases/latest/download/PalmierPro.dmg">
-  <img src="../../assets/macos-badge.png" alt="下载 macOS 版 Palmier Pro" width="180" />
+<a href="https://github.com/filmidi-io/filmidi-pro/releases/latest/download/FilmidiPro.dmg">
+  <img src="../../assets/macos-badge.png" alt="下载 macOS 版 Filmidi Pro" width="180" />
 </a>
 
 <sub><i>需要搭载 Apple Silicon 的 macOS 26 (Tahoe)</i></sub>
 
-<a href="https://x.com/Palmier_io"><img src="https://img.shields.io/badge/Follow-%40Palmier__io-000000?style=flat&logo=x&logoColor=white" alt="在 X 上关注" /></a>
+<a href="https://x.com/Filmidi_io"><img src="https://img.shields.io/badge/Follow-%40Filmidi__io-000000?style=flat&logo=x&logoColor=white" alt="在 X 上关注" /></a>
 <a href="https://discord.com/invite/SMVW6pKYmg"><img src="https://img.shields.io/badge/Join-Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="加入 Discord" /></a>
-<a href="https://www.ycombinator.com/companies/palmier"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
+<a href="https://www.ycombinator.com/companies/filmidi"><img src="https://img.shields.io/badge/Y%20Combinator-S24-orange" alt="Y Combinator S24" /></a>
 
 <p>
   <a href="../../README.md">English</a> ·
@@ -36,11 +36,11 @@
 
 </div>
 
-<img src="../../assets/palmier-ui.png" alt="Palmier Pro 界面" width="900" />
+<img src="../../assets/filmidi-ui.png" alt="Filmidi Pro 界面" width="900" />
 
 ---
 
-Palmier Pro 是面向 Mac 的开源视频编辑器。你和你的 Agent 可以在时间线中一起生成和编辑视频。
+Filmidi Pro 是面向 Mac 的开源视频编辑器。你和你的 Agent 可以在时间线中一起生成和编辑视频。
 
 ### 基于 Swift 原生开发的剪辑工具
 
@@ -60,12 +60,12 @@ Palmier Pro 是面向 Mac 的开源视频编辑器。你和你的 Agent 可以�
 
 **Claude Code**
 ```bash
-claude mcp add --transport http palmier-pro http://127.0.0.1:19789/mcp
+claude mcp add --transport http filmidi-pro http://127.0.0.1:19789/mcp
 ```
 
 **Codex**
 ```bash
-codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
+codex mcp add filmidi-pro --url http://127.0.0.1:19789/mcp
 ```
 
 **Cursor**
@@ -75,7 +75,7 @@ codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
 ```json
 {
   "mcpServers": {
-    "palmier-pro": {
+    "filmidi-pro": {
       "type": "http",
       "url": "http://127.0.0.1:19789/mcp"
     }
@@ -89,7 +89,7 @@ codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
 
 ## FAQ
 
-**Palmier Pro 是否完全开源？**
+**Filmidi Pro 是否完全开源？**
 
 视频编辑器本身完全开源，不包括生成式 AI 功能。MCP 服务器和 Agent 聊天也开源。唯一闭源的是生成式 AI 处理部分。
 
@@ -112,22 +112,22 @@ codex mcp add palmier-pro --url http://127.0.0.1:19789/mcp
 ## 社区与支持
 
 - **Discord:** 在 **[Discord](https://discord.com/invite/SMVW6pKYmg)** 加入社区。
-- **Twitter / X:** 关注 **[@Palmier_io](https://x.com/Palmier_io)** 获取更新和公告。
-- **Instagram:** 关注 [@palmier.io](https://www.instagram.com/palmier.io)。
-- **反馈与支持:** 创建 [GitHub Issue](https://github.com/palmier-io/palmier-pro/issues) 或发送邮件至 founders@palmier.io。
+- **Twitter / X:** 关注 **[@Filmidi_io](https://x.com/Filmidi_io)** 获取更新和公告。
+- **Instagram:** 关注 [@filmidi.io](https://www.instagram.com/filmidi.io)。
+- **反馈与支持:** 创建 [GitHub Issue](https://github.com/filmidi-io/filmidi-pro/issues) 或发送邮件至 founders@filmidi.io。
 
 ## Star History
 
-<a href="https://www.star-history.com/?type=date&repos=palmier-io%2Fpalmier-pro">
+<a href="https://www.star-history.com/?type=date&repos=filmidi-io%2Ffilmidi-pro">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
-   <img alt="Star History 图表" src="https://api.star-history.com/chart?repos=palmier-io/palmier-pro&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
+   <img alt="Star History 图表" src="https://api.star-history.com/chart?repos=filmidi-io/filmidi-pro&type=date&legend=top-left" />
  </picture>
 </a>
 
 ## 许可证
 
-Copyright (C) 2026 Palmier, Inc.
+Copyright (C) 2026 Filmidi, Inc.
 
-Palmier Pro 基于 [GPLv3](../../LICENSE) 开源。
+Filmidi Pro 基于 [GPLv3](../../LICENSE) 开源。
