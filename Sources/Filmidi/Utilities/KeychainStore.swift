@@ -1,52 +1,50 @@
 import Foundation
-import Security
+
+private let kStoreFile = "io.filmidi.credentials.json"
+
+private func storeURL() -> URL? {
+    try? FileManager.default.url(
+        for: .applicationSupportDirectory,
+        in: .userDomainMask,
+        appropriateFor: nil,
+        create: true
+    ).appendingPathComponent(kStoreFile)
+}
+
+private func readAll() -> [String: String] {
+    guard let url = storeURL(),
+          let data = try? Data(contentsOf: url),
+          let dict = try? JSONDecoder().decode([String: String].self, from: data)
+    else { return [:] }
+    return dict
+}
+
+private func writeAll(_ dict: [String: String]) {
+    guard let url = storeURL() else { return }
+    try? FileManager.default.createDirectory(
+        at: url.deletingLastPathComponent(),
+        withIntermediateDirectories: true
+    )
+    if let data = try? JSONEncoder().encode(dict) {
+        try? data.write(to: url, options: .atomic)
+        try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+    }
+}
 
 enum KeychainStore {
-    private static let service: String = Bundle.main.bundleIdentifier ?? "io.filmidi.app"
-
     static func save(_ value: String, account: String) {
-        let data = Data(value.utf8)
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-        ]
-        let attrs: [String: Any] = [
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
-        ]
-        let status = SecItemUpdate(query as CFDictionary, attrs as CFDictionary)
-        if status == errSecItemNotFound {
-            var insert = query
-            insert.merge(attrs) { _, new in new }
-            SecItemAdd(insert as CFDictionary, nil)
-        }
+        var dict = readAll()
+        dict[account] = value
+        writeAll(dict)
     }
 
     static func load(account: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-        ]
-        var item: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess,
-              let data = item as? Data,
-              let value = String(data: data, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines),
-              !value.isEmpty
-        else { return nil }
-        return value
+        readAll()[account]
     }
 
     static func delete(account: String) {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-        ]
-        SecItemDelete(query as CFDictionary)
+        var dict = readAll()
+        dict.removeValue(forKey: account)
+        writeAll(dict)
     }
 }
