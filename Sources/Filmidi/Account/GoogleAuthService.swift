@@ -9,16 +9,35 @@ enum GoogleAuthService {
     private static let sessionEmailAccount = "filmidi-session-email"
     private static let sessionNameAccount = "filmidi-session-name"
 
+    private static var _sessionToken: String?
+    private static var _sessionEmail: String?
+    private static var _sessionName: String?
+
     static var sessionToken: String? {
-        loadFromKeychain(account: sessionTokenAccount)
+        if let cached = _sessionToken { return cached }
+        let loaded = loadFromKeychain(account: sessionTokenAccount)
+        _sessionToken = loaded
+        return loaded
     }
 
     static var sessionEmail: String? {
-        loadFromKeychain(account: sessionEmailAccount)
+        if let cached = _sessionEmail { return cached }
+        let loaded = loadFromKeychain(account: sessionEmailAccount)
+        _sessionEmail = loaded
+        return loaded
     }
 
     static var sessionName: String? {
-        loadFromKeychain(account: sessionNameAccount)
+        if let cached = _sessionName { return cached }
+        let loaded = loadFromKeychain(account: sessionNameAccount)
+        _sessionName = loaded
+        return loaded
+    }
+
+    static func clearCache() {
+        _sessionToken = nil
+        _sessionEmail = nil
+        _sessionName = nil
     }
 
     static var isSignedIn: Bool {
@@ -50,12 +69,17 @@ enum GoogleAuthService {
         KeychainStore.save(result.email, account: sessionEmailAccount)
         KeychainStore.save(result.name, account: sessionNameAccount)
 
+        _sessionToken = result.token
+        _sessionEmail = result.email
+        _sessionName = result.name
+
         NotificationCenter.default.post(name: .filmidiSessionChanged, object: nil)
 
         return (result.email, result.name)
     }
 
     static func signOut() {
+        clearCache()
         KeychainStore.delete(account: sessionTokenAccount)
         KeychainStore.delete(account: sessionEmailAccount)
         KeychainStore.delete(account: sessionNameAccount)
