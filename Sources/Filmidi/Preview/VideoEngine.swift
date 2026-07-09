@@ -40,6 +40,10 @@ final class VideoEngine {
         timeObserver = nil
     }
 
+    /// Evict composition for a specific timeline (currently a no-op with single-timeline).
+    func evictComposition(for timelineId: String) {
+    }
+
     // MARK: - Playback
 
     func play() {

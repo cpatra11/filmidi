@@ -37,4 +37,11 @@ struct DiskCache: Sendable {
             try? fm.removeItem(at: entry)
         }
     }
+
+    static func sizeMtimeTag(for url: URL) -> String {
+        let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
+        let size = (attrs?[.size] as? Int) ?? 0
+        let modified = (attrs?[.modificationDate] as? Date)?.timeIntervalSince1970 ?? 0
+        return "\(size)_\(Int(modified))"
+    }
 }

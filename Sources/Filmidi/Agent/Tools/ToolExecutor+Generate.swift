@@ -46,6 +46,8 @@ extension ToolExecutor {
             return try generateImage(editor, args, prompt: prompt)
         case .audio:
             throw ToolError("internal: audio generation is dispatched via the async path")
+        case .text, .lottie, .sequence:
+            throw ToolError("Generation not supported for \(type) clips")
         case .text:
             throw ToolError("Text generation is not wired through the generate tool.")
         case .lottie:

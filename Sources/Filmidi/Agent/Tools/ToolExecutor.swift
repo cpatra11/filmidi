@@ -184,6 +184,20 @@ final class ToolExecutor {
         return String(data: data, encoding: .utf8)
     }
 
+    nonisolated static func encodeAsJSONObject<T: Encodable>(_ value: T) -> Any? {
+        guard let data = try? JSONEncoder().encode(value),
+              let obj = try? JSONSerialization.jsonObject(with: data)
+        else { return nil }
+        return obj
+    }
+
+    nonisolated static func rawTimelineDict(_ timeline: Timeline) -> [String: Any]? {
+        guard let data = try? JSONEncoder().encode(timeline),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return nil }
+        return obj
+    }
+
     func withUndoGroup<T>(_ editor: EditorViewModel, actionName: String, _ work: () throws -> T) rethrows -> T {
         editor.undoManager?.beginUndoGrouping()
         defer {

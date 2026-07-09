@@ -156,18 +156,14 @@ struct AccountPopoverCard: View {
 
     @ViewBuilder
     private var creditsBlock: some View {
-        if let budget = account.budgetCredits {
-            let left = max(0, budget - account.spentCredits)
-            let remaining = budget > 0 ? min(1.0, Double(left) / Double(budget)) : 0
+        let remaining = account.remainingCredits
+        if remaining != .max, remaining >= 0 {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.xs) {
-                ProgressView(value: remaining)
-                    .progressViewStyle(.linear)
-                    .tint(barColor(remaining))
                 HStack(spacing: AppTheme.Spacing.xs) {
-                    Text("\(left.formatted()) / \(budget.formatted()) credits")
+                    Text("\(remaining.formatted()) credits remaining")
                         .font(.system(size: AppTheme.FontSize.sm, weight: .medium))
                         .monospacedDigit()
-                        .foregroundStyle(AppTheme.Text.secondaryColor)
+                        .foregroundStyle(barColor(remaining))
                     Spacer(minLength: 0)
                     if let date = formattedPeriodEnd {
                         Text("Resets \(date)")
@@ -179,12 +175,10 @@ struct AccountPopoverCard: View {
         }
     }
 
-    private func barColor(_ remaining: Double) -> Color {
-        switch remaining {
-        case ..<0.05: return .red
-        case ..<0.25: return .orange
-        default: return AppTheme.Accent.primary
-        }
+    private func barColor(_ remaining: Int) -> Color {
+        if remaining <= 0 { return .red }
+        if remaining < 50 { return .orange }
+        return AppTheme.Accent.primary
     }
 
     // MARK: - Footer (Settings + Sign in / Sign out)

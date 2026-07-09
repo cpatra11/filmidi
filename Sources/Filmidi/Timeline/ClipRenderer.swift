@@ -2,6 +2,9 @@ import AppKit
 
 enum ClipRenderer {
 
+    /// Per-speaker tint colors for waveform drawing, keyed by speaker id. Set by EditorViewModel.syncSpeakerColors.
+    nonisolated(unsafe) static var speakerColors: [Int: CGColor] = [:]
+
     static let labelBarHeight: CGFloat = 16
 
     static let volumeKeyframeSize: CGFloat = 7

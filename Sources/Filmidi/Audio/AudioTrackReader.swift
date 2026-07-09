@@ -66,4 +66,21 @@ enum AudioTrackReader {
             throw ReadError.readFailed(reader.error?.localizedDescription ?? "Read failed")
         }
     }
+
+    /// Convenience: decode the first audio track to interleaved mono [Float] at `sampleRate`.
+    static func readMonoFloats(from url: URL, sampleRate: Double, range: ClosedRange<Double>? = nil) async throws -> [Float] {
+        var samples: [Float] = []
+        try await read(from: url, outputSettings: [
+            AVFormatIDKey: kAudioFormatLinearPCM,
+            AVSampleRateKey: sampleRate,
+            AVNumberOfChannelsKey: 1,
+            AVLinearPCMBitDepthKey: 32,
+            AVLinearPCMIsFloatKey: true,
+            AVLinearPCMIsBigEndianKey: false,
+        ], range: range) { buffer in
+            guard let data = buffer.floatChannelData?[0] else { return }
+            samples.append(contentsOf: UnsafeBufferPointer(start: data, count: Int(buffer.frameLength)))
+        }
+        return samples
+    }
 }

@@ -270,6 +270,7 @@ enum AppTheme {
         static let timelineClipDetailMinWidth: CGFloat = 32
         static let timelineClipLabelMinWidth: CGFloat = 56
         static let updateOverlayWidth: CGFloat = 640
+        static let timelineTabRenameWidth: CGFloat = 120
     }
 
     enum Window {
@@ -367,6 +368,7 @@ extension ClipType {
         case .image: AppTheme.TrackColor.image
         case .text: AppTheme.TrackColor.text
         case .lottie: AppTheme.TrackColor.lottie
+        case .sequence: AppTheme.TrackColor.video
         }
     }
 }

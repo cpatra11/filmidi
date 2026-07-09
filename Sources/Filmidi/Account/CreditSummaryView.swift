@@ -11,17 +11,16 @@ struct CreditSummaryView: View {
     @State private var showActions = false
 
     var body: some View {
-        if let budget = account.budgetCredits {
-            let left = max(0, budget - account.spentCredits)
-            let remaining = budget > 0 ? min(1.0, Double(left) / Double(budget)) : 0
+        let remaining = account.remainingCredits
+        if remaining != .max, remaining >= 0 {
             switch style {
             case .full:
-                fullView(left: left, budget: budget, remaining: remaining)
+                fullView(remaining: remaining)
             case .compact:
                 Button {
                     showActions = true
                 } label: {
-                    compactView(left: left, budget: budget, remaining: remaining)
+                    compactView(remaining: remaining)
                 }
                 .buttonStyle(.plain)
                 .help("Manage credits")
@@ -32,27 +31,24 @@ struct CreditSummaryView: View {
         }
     }
 
-    private func fullView(left: Int, budget: Int, remaining: Double) -> some View {
+    private func fullView(remaining: Int) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.xs) {
             HStack(spacing: AppTheme.Spacing.xs) {
-                Text("\(left.formatted()) / \(budget.formatted())")
+                Text("\(remaining.formatted()) remaining")
                     .font(.system(size: AppTheme.FontSize.sm, weight: .medium))
                     .monospacedDigit()
                     .foregroundStyle(barColor(remaining))
                 Spacer()
             }
-            ProgressView(value: remaining)
-                .progressViewStyle(.linear)
-                .tint(barColor(remaining))
         }
     }
 
-    private func compactView(left: Int, budget: Int, remaining: Double) -> some View {
+    private func compactView(remaining: Int) -> some View {
         HStack(spacing: AppTheme.Spacing.xs) {
             Image(systemName: "dollarsign.circle.fill")
                 .font(.system(size: AppTheme.FontSize.sm))
                 .foregroundStyle(barColor(remaining))
-            Text(left.formatted())
+            Text(remaining.formatted())
                 .font(.system(size: AppTheme.FontSize.xs, weight: .medium))
                 .monospacedDigit()
                 .foregroundStyle(barColor(remaining))
@@ -65,16 +61,13 @@ struct CreditSummaryView: View {
         .overlay(
             Capsule().stroke(AppTheme.Border.subtleColor, lineWidth: AppTheme.BorderWidth.hairline)
         )
-        .help("\(left.formatted()) of \(budget.formatted()) credits remaining this period")
+        .help("\(remaining.formatted()) credits remaining")
     }
 
-    /// Tint by remaining ratio — full bar is healthy, drained bar is alarming.
-    private func barColor(_ remaining: Double) -> Color {
-        switch remaining {
-        case ..<0.05: return .red
-        case ..<0.25: return .orange
-        default: return AppTheme.Accent.primary
-        }
+    private func barColor(_ remaining: Int) -> Color {
+        if remaining <= 0 { return .red }
+        if remaining < 50 { return .orange }
+        return AppTheme.Accent.primary
     }
 }
 

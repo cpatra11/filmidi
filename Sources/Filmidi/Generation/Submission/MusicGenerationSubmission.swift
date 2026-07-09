@@ -7,6 +7,8 @@ struct MusicGenerationSubmission {
     let mode: Mode
     let model: AudioModelConfig
     let prompt: String?
+    let lyrics: String?
+    let instrumental: Bool
     let source: EditorViewModel.TimelineSpan
     let spanSeconds: Double
     let name: String?
@@ -55,9 +57,9 @@ struct MusicGenerationSubmission {
         let params = AudioGenerationParams(
             prompt: prompt ?? "",
             voice: nil,
-            lyrics: nil,
+            lyrics: lyrics,
             styleInstructions: nil,
-            instrumental: false,
+            instrumental: instrumental,
             durationSeconds: durationSeconds,
             videoURL: videoURL
         )

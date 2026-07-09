@@ -4,6 +4,7 @@ enum ClipType: String, Codable, Sendable, CaseIterable {
     case image
     case text
     case lottie
+    case sequence
 
     var sfSymbolName: String {
         switch self {
@@ -12,6 +13,7 @@ enum ClipType: String, Codable, Sendable, CaseIterable {
         case .image: "photo"
         case .text: "textformat"
         case .lottie: "sparkles"
+        case .sequence: "rectangle.stack"
         }
     }
 
@@ -22,6 +24,7 @@ enum ClipType: String, Codable, Sendable, CaseIterable {
         case .image: "Image"
         case .text: "Text"
         case .lottie: "Lottie"
+        case .sequence: "Sequence"
         }
     }
 

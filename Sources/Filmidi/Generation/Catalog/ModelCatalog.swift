@@ -252,7 +252,7 @@ final class ModelCatalog {
                     durations: nil, minPromptLength: 1,
                     inputs: ["text"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
                 )),
-                paidOnly: false
+                audioPricing: .perSecond(rate: 5), paidOnly: false
             ),
             CatalogEntry(
                 id: "qwen3-tts-instruct-flash", kind: .audio, displayName: "Qwen3 TTS Instruct Flash",
@@ -265,7 +265,7 @@ final class ModelCatalog {
                     durations: nil, minPromptLength: 1,
                     inputs: ["text"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
                 )),
-                paidOnly: false
+                audioPricing: .perSecond(rate: 5), paidOnly: false
             ),
             CatalogEntry(
                 id: "cosyvoice-v3-plus", kind: .audio, displayName: "CosyVoice v3 Plus",
@@ -278,7 +278,7 @@ final class ModelCatalog {
                     durations: nil, minPromptLength: 1,
                     inputs: ["text"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
                 )),
-                paidOnly: false
+                audioPricing: .perSecond(rate: 8), paidOnly: false
             ),
             CatalogEntry(
                 id: "cosyvoice-v3-flash", kind: .audio, displayName: "CosyVoice v3 Flash",
@@ -291,7 +291,61 @@ final class ModelCatalog {
                     durations: nil, minPromptLength: 1,
                     inputs: ["text"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
                 )),
-                paidOnly: false
+                audioPricing: .perSecond(rate: 3), paidOnly: false
+            ),
+
+            // MARK: - Music / SFX models
+            CatalogEntry(
+                id: "fun-music-v1", kind: .audio, displayName: "FunMusic v1",
+                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "music",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: true, supportsInstrumental: true,
+                    supportsStyleInstructions: false,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["text"], promptLabel: "Describe the music", minSeconds: nil, maxSeconds: nil
+                )),
+                audioPricing: .perSecond(rate: 25), paidOnly: false
+            ),
+            CatalogEntry(
+                id: "fun-music-preview", kind: .audio, displayName: "FunMusic Preview",
+                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "music",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: true, supportsInstrumental: false,
+                    supportsStyleInstructions: false,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["text"], promptLabel: "Describe the music", minSeconds: nil, maxSeconds: nil
+                )),
+                audioPricing: .perSecond(rate: 10), paidOnly: false
+            ),
+            CatalogEntry(
+                id: "sonilo-v1.1-video-to-music", kind: .audio, displayName: "Sonilo Video to Music v1.1",
+                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "music",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: false, supportsInstrumental: false,
+                    supportsStyleInstructions: false,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["video"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
+                )),
+                audioPricing: .perSecond(rate: 30), paidOnly: false
+            ),
+            CatalogEntry(
+                id: "mirelo-sfx-v1.5-video-to-audio", kind: .audio, displayName: "Mirelo SFX v1.5",
+                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "sfx",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: false, supportsInstrumental: false,
+                    supportsStyleInstructions: false,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["video"], promptLabel: "Describe the sound", minSeconds: nil, maxSeconds: nil
+                )),
+                audioPricing: .perSecond(rate: 20), paidOnly: false
             ),
 
             // MARK: - Speech-to-Text / Transcription models

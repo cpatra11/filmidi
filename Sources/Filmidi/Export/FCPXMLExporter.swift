@@ -290,7 +290,7 @@ enum FCPXMLExporter {
                         return titleNode(for: item)
                     case .audio, .video, .image:
                         return assetClipNode(for: item)
-                    case .lottie:
+                    case .lottie, .sequence:
                         return nil
                     }
                 }
@@ -708,7 +708,7 @@ enum FCPXMLExporter {
             switch clip.mediaType {
             case .text:
                 return clip.textContent?.isEmpty == false
-            case .lottie:
+            case .lottie, .sequence:
                 return false
             case .audio, .video, .image:
                 return resolver.resolveURL(for: clip.mediaRef) != nil

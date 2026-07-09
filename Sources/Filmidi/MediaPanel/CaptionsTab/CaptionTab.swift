@@ -54,7 +54,8 @@ struct CaptionTab: View {
         editor.timeline.tracks.indices.filter { !editor.captionTargets(trackIds: [editor.timeline.tracks[$0].id]).isEmpty }
     }
     private var remainingCloudCredits: Int? {
-        account.budgetCredits == nil ? nil : account.remainingCredits
+        let remaining = account.remainingCredits
+        return remaining == .max ? nil : remaining
     }
     private var cloudModeUnavailableMessage: String? {
         guard provider == .cloud else { return nil }

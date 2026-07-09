@@ -35,6 +35,20 @@ struct KeyframeTrack<Value: Codable & Sendable & Equatable>: Codable, Sendable, 
         kf.frame = newFrame
         upsert(kf)
     }
+
+    /// Shift all keyframes by `offset` frames, inserting a new keyframe at frame 0 with `fallback`.
+    func rebased(by offset: Int, fallback: Value) -> Self {
+        guard !keyframes.isEmpty else { return self }
+        var shifted = keyframes.map { kf in
+            var k = kf
+            k.frame = max(0, kf.frame - offset)
+            return k
+        }
+        if offset > 0, let first = shifted.first, first.frame > 0 {
+            shifted.insert(Keyframe(frame: 0, value: fallback, interpolationOut: .hold), at: 0)
+        }
+        return Self(keyframes: shifted)
+    }
 }
 
 @inlinable func smoothstep(_ t: Double) -> Double { t * t * (3 - 2 * t) }

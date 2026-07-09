@@ -35,8 +35,13 @@ extension ToolExecutor {
         _ editor: EditorViewModel, query: String, limit: Int, restrict: Set<String>?
     ) async -> [String: Any] {
         let coordinator = editor.searchIndex
-        if VisualModelLoader.shared.enabled, VisualModelLoader.shared.state == .unknown {
-            await VisualModelLoader.shared.prepare()
+        let loader = VisualModelLoader.shared
+        if loader.enabled {
+            switch loader.state {
+            case .unknown: await loader.prepare()
+            case .notInstalled: loader.download()
+            default: break
+            }
         }
 
         var payload: [String: Any] = ["status": Self.visualStatus(coordinator)]

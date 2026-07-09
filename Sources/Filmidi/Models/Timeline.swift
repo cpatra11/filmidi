@@ -1,12 +1,24 @@
 import Foundation
 
 /// Clip location inside track storage.
+typealias TimelineResolver = (String) -> Timeline?
+
 struct ClipLocation: Equatable, Sendable {
     let trackIndex: Int
     let clipIndex: Int
 }
 
-struct Timeline: Codable, Sendable, Equatable {
+/// Written on tab switch and save, not live — playhead mutates every frame.
+struct TimelineViewState: Codable, Sendable, Equatable {
+    var playheadFrame: Int = 0
+    var zoomScale: Double = Defaults.pixelsPerFrame
+    var scrollOffsetX: Double = 0
+}
+
+struct Timeline: Codable, Sendable, Equatable, Identifiable {
+    var id: String = UUID().uuidString
+    var name: String = "Timeline 1"
+    var folderId: String?
     var fps: Int = 30
     var width: Int = 1920
     var height: Int = 1080
@@ -19,6 +31,34 @@ struct Timeline: Codable, Sendable, Equatable {
             maxFrame = max(maxFrame, track.endFrame)
         }
         return maxFrame
+    }
+
+    var hasAudioClips: Bool {
+        tracks.contains { $0.type == .audio && !$0.clips.isEmpty }
+    }
+
+    func reachableTimelines(resolve: TimelineResolver) -> [Timeline] {
+        var seen = Set<String>()
+        var result: [Timeline] = []
+        func dfs(_ id: String) {
+            guard seen.insert(id).inserted, let tl = resolve(id) else { return }
+            result.append(tl)
+            for track in tl.tracks {
+                for clip in track.clips where clip.mediaType == .sequence {
+                    dfs(clip.mediaRef)
+                }
+            }
+        }
+        for track in tracks {
+            for clip in track.clips where clip.mediaType == .sequence {
+                dfs(clip.mediaRef)
+            }
+        }
+        return result
+    }
+
+    static func hasAudioClips(tracks: [Track]) -> Bool {
+        tracks.contains { $0.type == .audio && !$0.clips.isEmpty }
     }
 }
 
@@ -109,6 +149,17 @@ struct Clip: Codable, Sendable, Equatable, Identifiable {
     var volumeTrack: KeyframeTrack<Double>?
 
     var effects: [Effect]?
+
+    var hasDenoiseEnabled: Bool {
+        effects?.contains { $0.type == Self.denoiseEffectType && $0.enabled } ?? false
+    }
+
+    var denoiseAmount: Double {
+        effects?.first { $0.type == Self.denoiseEffectType }?.params["amount"]?.value ?? Self.defaultDenoiseAmount
+    }
+
+    static let denoiseEffectType = "audio.denoise"
+    static let defaultDenoiseAmount: Double = 0.6
 
     /// How this clip composites over the tracks below it. nil = normal (source-over).
     var blendMode: BlendMode?
@@ -322,6 +373,18 @@ extension Clip {
         case .right: fadeOutFrames = v
         }
         clampFadesToDuration()
+    }
+
+    mutating func freshenIds(groups: inout [String: String]) {
+        id = UUID().uuidString
+        let oldGroup = linkGroupId
+        if let oldGroup, let fresh = groups[oldGroup] {
+            linkGroupId = fresh
+        } else if let oldGroup {
+            let fresh = UUID().uuidString
+            groups[oldGroup] = fresh
+            linkGroupId = fresh
+        }
     }
 
     mutating func setFadeInterpolation(_ edge: FadeEdge, _ interpolation: Interpolation) {

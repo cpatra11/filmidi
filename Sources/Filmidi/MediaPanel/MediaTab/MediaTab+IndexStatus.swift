@@ -6,7 +6,7 @@ extension MediaTab {
         let search = editor.searchIndex
         let model = VisualModelLoader.shared
         switch model.state {
-        case .notInstalled where model.enabled && hasIndexableAssets:
+        case .notInstalled where model.enabled:
             statusButton(icon: "sparkle.magnifyingglass", label: "Smart search") {
                 model.download()
             }
@@ -27,10 +27,6 @@ extension MediaTab {
         default:
             EmptyView()
         }
-    }
-
-    private var hasIndexableAssets: Bool {
-        editor.mediaAssets.contains { $0.type == .video || $0.type == .image }
     }
 
     private var modelSizeLabel: String {

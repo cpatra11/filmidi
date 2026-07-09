@@ -113,6 +113,26 @@ extension EditorViewModel {
         )
     }
 
+    func moveTimelinesToFolder(timelineIds: Set<String>, folderId: String?) {
+        guard !timelineIds.isEmpty else { return }
+        var changes: [ParentChange] = []
+        for id in timelineIds {
+            guard let timeline = timelines.first(where: { $0.id == id }) else { continue }
+            if timeline.folderId == folderId { continue }
+            changes.append((id, folderId))
+        }
+        guard !changes.isEmpty else { return }
+        applyParentChanges(
+            changes, actionName: "Move to Folder",
+            get: { vm, id in vm.timelines.first(where: { $0.id == id })?.folderId },
+            set: { vm, id, value in
+                if let idx = vm.timelines.firstIndex(where: { $0.id == id }) {
+                    vm.timelines[idx].folderId = value
+                }
+            }
+        )
+    }
+
     func moveFoldersToFolder(folderIds: Set<String>, parentFolderId: String?) {
         guard !folderIds.isEmpty else { return }
         let folderIndex = MediaFolderIndex(mediaManifest.folders)

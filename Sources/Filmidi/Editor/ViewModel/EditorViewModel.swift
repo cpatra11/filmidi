@@ -24,8 +24,33 @@ final class EditorViewModel {
 
     // MARK: - Persisted state (synced with VideoProject)
 
-    var timeline = Timeline() {
+    var timelines: [Timeline] = [] {
         didSet { timelineRenderRevision &+= 1 }
+    }
+    var activeTimelineId: String = ""
+    var openTimelineIds: [String] = []
+    @ObservationIgnored var liveViewStates: [String: TimelineViewState] = [:]
+    var timelineTabRenameRequest: String?
+
+    /// Active-timeline proxy; assignment routes by id and activates so undo lands on its timeline.
+    var timeline: Timeline {
+        get { timelines.first(where: { $0.id == activeTimelineId }) ?? timelines[0] }
+        set {
+            if let i = timelines.firstIndex(where: { $0.id == newValue.id }) {
+                timelines[i] = newValue
+            } else {
+                let i = timelines.firstIndex(where: { $0.id == activeTimelineId }) ?? 0
+                let oldId = timelines[i].id
+                timelines[i] = newValue
+                openTimelineIds = openTimelineIds.map { $0 == oldId ? newValue.id : $0 }
+            }
+            activeTimelineId = newValue.id
+            if !openTimelineIds.contains(newValue.id) { openTimelineIds.append(newValue.id) }
+        }
+        _modify {
+            let i = timelines.firstIndex(where: { $0.id == activeTimelineId }) ?? 0
+            yield &timelines[i]
+        }
     }
     var mediaManifest = MediaManifest()
     var generationLog = GenerationLog()
@@ -87,6 +112,33 @@ final class EditorViewModel {
     var pendingEditAudioPlacement: PendingAudioPlacement?
     /// Clip ids currently awaiting an AI-generated replacement.
     var pendingReplacements: Set<String> = []
+
+    // MARK: - Denoise bake state (session-scoped, keyed by mediaRef)
+
+    var denoiseInFlight: Set<String> = []
+    var denoiseFailed: Set<String> = []
+    var denoiseBaked: Set<String> = []
+
+    // MARK: - Beat markers
+
+    var markBeats: Bool = {
+        UserDefaults.standard.object(forKey: "markBeats") as? Bool ?? true
+    }() {
+        didSet { UserDefaults.standard.set(markBeats, forKey: "markBeats") }
+    }
+
+    // MARK: - Speaker identity
+
+    var speakerRegistry: [SpeakerRegistryEntry] = []
+    var speakerAssignments: [String: [String: Int]] = [:]
+    var speakerIdentifyPhase: String?
+    var speakerIdentifyInFlight: Bool = false
+    var speakerIdentifyError: String?
+    var markSpeakers: Bool = false {
+        didSet { syncSpeakerColors() }
+    }
+    var markDeadAir: Bool = false
+    var speechAnalyzingCount: Int = 0
     var cropEditingActive: Bool = false
     var cropAspectLock: CropAspectLock = .free
     var previewTabs: [PreviewTab] = [.timeline]
@@ -180,12 +232,19 @@ final class EditorViewModel {
     }
 
     init() {
+        let first = Timeline()
+        timelines = [first]
+        activeTimelineId = first.id
+        openTimelineIds = [first.id]
         mediaResolver = MediaResolver(
             manifest: { [weak self] in self?.mediaManifest ?? MediaManifest() },
             projectURL: { [weak self] in self?.projectURL }
         )
         agentService.editor = self
         searchIndex.assetsProvider = { [weak self] in self?.mediaAssets ?? [] }
+        mediaVisualCache.speech.onAnalyzingCountChange = { [weak self] count in
+            self?.speechAnalyzingCount = count
+        }
 
         // Re-check media presence when the app regains focus: a user may have
         // deleted/moved backing files in Finder (or ejected a volume) while we
@@ -315,6 +374,11 @@ final class EditorViewModel {
     func skipBackward(frames: Int = 5) { seekToFrame(currentFrame - frames) }
 
     // MARK: - Shared infrastructure
+
+    var selectedTimelineIds: Set<String> = []
+    var timelineScrollOffsetX: Double = 0
+    /// Written by restoreActiveViewState and consumed by TimelineScrollController on next draw.
+    var timelineScrollRestoreX: Double?
 
     /// Per-clip snapshot at drag start, keyed by clip id so multiple clips can be edited in tandem.
     var dragBefore: [String: Clip] = [:]
@@ -474,6 +538,23 @@ final class EditorViewModel {
     func fitTransform(for clip: Clip) -> Transform {
         guard let asset = mediaAssets.first(where: { $0.id == clip.mediaRef }) else { return Transform() }
         return fitTransform(for: asset)
+    }
+
+    /// Fit source dimensions onto the active timeline canvas (for nested timelines).
+    func fitTransform(sourceWidth: Int, sourceHeight: Int) -> Transform {
+        let cw = Double(timeline.width), ch = Double(timeline.height)
+        let sw = Double(sourceWidth), sh = Double(sourceHeight)
+        guard cw > 0, ch > 0, sw > 0, sh > 0 else { return Transform() }
+        let sourceAspect = sw / sh
+        let canvasAspect = cw / ch
+        if abs(canvasAspect - sourceAspect) < Defaults.aspectTolerance {
+            return Transform()
+        }
+        if sourceAspect > canvasAspect {
+            return Transform(width: 1.0, height: canvasAspect / sourceAspect)
+        } else {
+            return Transform(width: sourceAspect / canvasAspect, height: 1.0)
+        }
     }
 
     func fitTransform(for asset: MediaAsset, canvasWidth: Int, canvasHeight: Int) -> Transform {

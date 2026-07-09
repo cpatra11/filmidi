@@ -13,6 +13,7 @@ let package = Package(
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.7.0"),
         .package(url: "https://github.com/huggingface/swift-transformers", from: "1.3.3"),
         .package(url: "https://github.com/airbnb/lottie-spm", from: "4.6.1"),
+        .package(url: "https://github.com/soniqo/speech-swift", from: "0.0.21"),
     ],
     targets: [
         .executableTarget(
@@ -22,6 +23,8 @@ let package = Package(
                 .product(name: "Sparkle", package: "Sparkle"),
                 .product(name: "Tokenizers", package: "swift-transformers"),
                 .product(name: "Lottie", package: "lottie-spm"),
+                .product(name: "SpeechEnhancement", package: "speech-swift"),
+                .product(name: "SpeechVAD", package: "speech-swift"),
             ],
             path: "Sources/Filmidi",
             exclude: [
@@ -36,6 +39,7 @@ let package = Package(
                 .copy("Resources/Images"),
                 .copy("Resources/Changelog"),
                 .copy("Resources/Localization"),
+                .copy("Resources/Models"),
             ],
             plugins: ["MetalCIKernelPlugin"]
         ),

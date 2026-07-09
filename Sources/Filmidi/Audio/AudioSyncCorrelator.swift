@@ -9,18 +9,26 @@ enum AudioSyncCorrelator {
 
     static let minOverlap = 16
 
-    static func correlate(reference: [Float], target: [Float], maxLagHops: Int) -> Result? {
+    static func correlate(reference: [Float], target: [Float], maxLagHops: Int, centerLagHops: Int? = nil, minOverlapHops: Int = minOverlap) -> Result? {
         guard !reference.isEmpty, !target.isEmpty, maxLagHops >= 0 else { return nil }
 
         let ref = reference.map(Double.init)
         let tgt = target.map(Double.init)
+
+        let minOverlap = max(1, minOverlapHops)
+        let lagRange: ClosedRange<Int>
+        if let center = centerLagHops {
+            lagRange = max(-maxLagHops, center - maxLagHops / 4)...min(maxLagHops, center + maxLagHops / 4)
+        } else {
+            lagRange = (-maxLagHops)...maxLagHops
+        }
 
         var best: Result?
         ref.withUnsafeBufferPointer { refBuf in
             tgt.withUnsafeBufferPointer { tgtBuf in
                 let refBase = refBuf.baseAddress!
                 let tgtBase = tgtBuf.baseAddress!
-                for lag in -maxLagHops...maxLagHops {
+                for lag in lagRange {
                     let iStart = max(0, -lag)
                     let iEnd = min(tgt.count, ref.count - lag)
                     let n = iEnd - iStart
