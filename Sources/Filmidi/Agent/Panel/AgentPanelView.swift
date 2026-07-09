@@ -160,12 +160,27 @@ struct AgentPanelView: View {
     }
 
     @ViewBuilder
-    private var byokIndicator: some View {
+    private var authIndicator: some View {
         if service.hasApiKey {
-            Text("using API key")
-                .font(.system(size: AppTheme.FontSize.xs).italic())
-                .foregroundStyle(AppTheme.Text.tertiaryColor)
-                .help("Using your own API key (direct mode)")
+            switch QwenAccountService.shared.mode {
+            case .direct:
+                Text("using API key")
+                    .font(.system(size: AppTheme.FontSize.xs).italic())
+                    .foregroundStyle(AppTheme.Text.tertiaryColor)
+                    .help("Using your own API key (direct mode)")
+            case .backend:
+                if let email = QwenAccountService.shared.sessionEmail {
+                    Text(email)
+                        .font(.system(size: AppTheme.FontSize.xs).italic())
+                        .foregroundStyle(AppTheme.Text.tertiaryColor)
+                        .help("Signed in to Filmidi Backend")
+                } else {
+                    Text("using backend")
+                        .font(.system(size: AppTheme.FontSize.xs).italic())
+                        .foregroundStyle(AppTheme.Text.tertiaryColor)
+                        .help("Using Filmidi Backend")
+                }
+            }
         }
     }
 
@@ -389,7 +404,7 @@ struct AgentPanelView: View {
                 onCancel: { service.cancel() }
             ) {
                 modelPicker
-                byokIndicator
+                authIndicator
             }
         }
         .padding(.horizontal, AppTheme.Spacing.mdLg)

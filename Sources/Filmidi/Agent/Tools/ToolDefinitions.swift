@@ -48,6 +48,12 @@ enum ToolName: String, CaseIterable, Sendable {
     case getProjects = "get_projects"
     case openProject = "open_project"
     case newProject = "new_project"
+    case listMulticamSources = "list_multicam_sources"
+    case switchMulticamSource = "switch_multicam_source"
+    case addMulticamSource = "add_multicam_source"
+    case removeMulticamSource = "remove_multicam_source"
+    case renameMulticamSource = "rename_multicam_source"
+    case assignClipToSource = "assign_clip_to_source"
 }
 
 struct AgentTool: @unchecked Sendable {
@@ -889,6 +895,62 @@ enum ToolDefinitions {
                     "severity": ["type": "string", "enum": ["low", "medium", "high"], "description": "Optional. How much this blocked the user."],
                 ],
                 required: ["category", "summary"]
+            )
+        ),
+        AgentTool(
+            name: .listMulticamSources,
+            description: "Lists all multicam camera angles (sources) in the project, including which is active and how many clips are assigned to each.",
+            inputSchema: objectSchema()
+        ),
+        AgentTool(
+            name: .switchMulticamSource,
+            description: "Switch the active multicam camera angle. Only clips assigned to the active source are visible on the timeline. Pass no sourceId to show all sources (disable multicam).",
+            inputSchema: objectSchema(
+                properties: [
+                    "sourceId": ["type": "string", "description": "Optional. The source ID from list_multicam_sources to activate. Omit to show all sources."],
+                ]
+            )
+        ),
+        AgentTool(
+            name: .addMulticamSource,
+            description: "Create a new multicam camera angle. The new source becomes active automatically.",
+            inputSchema: objectSchema(
+                properties: [
+                    "name": ["type": "string", "description": "Display name for the angle (e.g. 'Wide Shot', 'Close-up')."],
+                ],
+                required: ["name"]
+            )
+        ),
+        AgentTool(
+            name: .removeMulticamSource,
+            description: "Remove a multicam camera angle and unassign its clips.",
+            inputSchema: objectSchema(
+                properties: [
+                    "sourceId": ["type": "string", "description": "The source ID to remove."],
+                ],
+                required: ["sourceId"]
+            )
+        ),
+        AgentTool(
+            name: .renameMulticamSource,
+            description: "Rename a multicam camera angle.",
+            inputSchema: objectSchema(
+                properties: [
+                    "sourceId": ["type": "string", "description": "The source ID to rename."],
+                    "name": ["type": "string", "description": "New display name."],
+                ],
+                required: ["sourceId", "name"]
+            )
+        ),
+        AgentTool(
+            name: .assignClipToSource,
+            description: "Assign a clip (by clipId from get_timeline) to a multicam source. Only clips assigned to the active source are visible when multicam is active.",
+            inputSchema: objectSchema(
+                properties: [
+                    "clipId": ["type": "string", "description": "The clip ID to assign."],
+                    "sourceId": ["type": "string", "description": "The source ID from list_multicam_sources."],
+                ],
+                required: ["clipId", "sourceId"]
             )
         ),
     ]

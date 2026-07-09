@@ -126,6 +126,12 @@ final class ToolExecutor {
         case .sendFeedback:  return try await sendFeedback(editor, args)
         case .setProjectSettings: return try setProjectSettings(editor, args)
         case .readSkill:     return readSkill(args)
+        case .listMulticamSources: return listMulticamSources(editor)
+        case .switchMulticamSource: return try switchMulticamSource(editor, args: args)
+        case .addMulticamSource: return try addMulticamSource(editor, args: args)
+        case .removeMulticamSource: return try removeMulticamSource(editor, args: args)
+        case .renameMulticamSource: return try renameMulticamSource(editor, args: args)
+        case .assignClipToSource: return try assignClipToSource(editor, args: args)
         case .getProjects, .openProject, .newProject:
             return await runProjectTool(tool, args)
         }

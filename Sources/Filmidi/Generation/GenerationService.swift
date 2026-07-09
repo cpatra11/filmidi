@@ -386,6 +386,10 @@ final class GenerationService {
 
     // MARK: - Job execution
 
+    private func modelNeedsBackend(_ modelId: String) -> Bool {
+        modelId.hasPrefix("sonilo-") || modelId.hasPrefix("mirelo-") || modelId.hasPrefix("hitpaw-")
+    }
+
     private func runJob(
         placeholders: [MediaAsset],
         params: BackendGenerationParams,
@@ -400,6 +404,9 @@ final class GenerationService {
 
         let jobId: String
         do {
+            if modelNeedsBackend(genInput.model), QwenAccountService.shared.mode == .direct {
+                throw GenerationBackendError.transport("Model '\(genInput.model)' requires the Filmidi backend. Sign in and subscribe to use it.")
+            }
             if QwenAccountService.shared.mode == .direct, let apiKey = QwenAccountService.shared.qwenAPIKey {
                 jobId = try await DirectGenerationBackend.submit(
                     model: genInput.model,

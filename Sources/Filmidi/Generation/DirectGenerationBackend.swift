@@ -11,6 +11,9 @@ enum DirectGenerationBackend {
         params: BackendGenerationParams,
         apiKey: String
     ) async throws -> String {
+        if model.hasPrefix("sonilo-") || model.hasPrefix("mirelo-") || model.hasPrefix("hitpaw-") {
+            throw GenerationBackendError.api(status: 400, code: "backend_only", message: "Model '\(model)' requires the Filmidi backend. Sign in and subscribe to use it.")
+        }
         let body = try buildQwenBody(model: model, params: params)
 
         var request = URLRequest(url: qwenEndpoint(model: model, for: params))
@@ -150,12 +153,31 @@ enum DirectGenerationBackend {
                 ],
             ]
         case .audio(let p):
+            var parameters: [String: Any] = [
+                "voice": p.voice ?? "longxiaochun",
+            ]
+            if let lyrics = p.lyrics, !lyrics.isEmpty {
+                parameters["lyrics"] = lyrics
+            }
+            if let style = p.styleInstructions, !style.isEmpty {
+                parameters["style_instructions"] = style
+            }
+            if p.instrumental {
+                parameters["instrumental"] = true
+            }
+            if let duration = p.durationSeconds {
+                parameters["duration"] = duration
+            }
+
+            var input: [String: Any] = ["text": p.prompt]
+            if let url = p.videoURL {
+                input["video_url"] = url
+            }
+
             return [
                 "model": model,
-                "input": ["text": p.prompt],
-                "parameters": [
-                    "voice": p.voice ?? "longxiaochun",
-                ],
+                "input": input,
+                "parameters": parameters,
             ]
         case .upscale(let p):
             return [

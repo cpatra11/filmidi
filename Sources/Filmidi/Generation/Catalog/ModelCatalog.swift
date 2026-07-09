@@ -323,7 +323,7 @@ final class ModelCatalog {
             ),
             CatalogEntry(
                 id: "sonilo-v1.1-video-to-music", kind: .audio, displayName: "Sonilo Video to Music v1.1",
-                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                allowedEndpoints: ["sonilo"], responseShape: .audio,
                 uiCapabilities: .audio(AudioCaps(
                     category: "music",
                     voices: nil, defaultVoice: nil,
@@ -336,7 +336,7 @@ final class ModelCatalog {
             ),
             CatalogEntry(
                 id: "mirelo-sfx-v1.5-video-to-audio", kind: .audio, displayName: "Mirelo SFX v1.5",
-                allowedEndpoints: ["multimodal-generation"], responseShape: .audio,
+                allowedEndpoints: ["mirelo"], responseShape: .audio,
                 uiCapabilities: .audio(AudioCaps(
                     category: "sfx",
                     voices: nil, defaultVoice: nil,

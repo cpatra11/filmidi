@@ -183,6 +183,7 @@ final class EditorViewModel {
         manifest: { MediaManifest() }, projectURL: { nil }
     )
 
+    var multicamEngine = MulticamEngine()
     let generationService = GenerationService()
     let agentService = AgentService()
 
