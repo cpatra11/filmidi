@@ -24,6 +24,9 @@ struct Timeline: Codable, Sendable, Equatable, Identifiable {
     var height: Int = 1080
     var settingsConfigured: Bool = false
     var tracks: [Track] = []
+    var multicamSources: [MulticamSource] = []
+    var multicamActiveSourceId: String?
+    var multicamAssignment: [String: String] = [:]
 
     var totalFrames: Int {
         var maxFrame = 0

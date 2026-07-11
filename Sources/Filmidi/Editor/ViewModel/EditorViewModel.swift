@@ -184,6 +184,11 @@ final class EditorViewModel {
     )
 
     var multicamEngine = MulticamEngine()
+
+    var visibleTracks: [Track] {
+        multicamEngine.filteredTracks(timeline.tracks)
+    }
+
     let generationService = GenerationService()
     let agentService = AgentService()
 

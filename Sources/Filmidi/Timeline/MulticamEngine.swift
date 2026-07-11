@@ -61,6 +61,20 @@ final class MulticamEngine {
 
     var isActive: Bool { activeSourceId != nil }
 
+    /// Captures full engine state for undo snapshots.
+    func snapshot() -> (sources: [MulticamSource], activeSourceId: String?, assignment: [String: String]) {
+        (sources, activeSourceId, assignment)
+    }
+
+    /// Restores engine state from a snapshot.
+    func injectAssignment(_ assignment: [String: String]) { self.assignment = assignment }
+
+    func restore(sources: [MulticamSource], activeSourceId: String?, assignment: [String: String]) {
+        self.sources = sources
+        self.activeSourceId = activeSourceId
+        self.assignment = assignment
+    }
+
     /// Filter tracks based on active source: hides clips that belong to non-active sources.
     func filteredTracks(_ tracks: [Track]) -> [Track] {
         guard let active = activeSourceId else { return tracks }

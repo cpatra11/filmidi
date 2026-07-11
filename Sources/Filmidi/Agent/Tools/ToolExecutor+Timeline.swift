@@ -27,6 +27,16 @@ extension ToolExecutor {
         guard var dict = try? JSONSerialization.jsonObject(
             with: JSONEncoder().encode(editor.timeline)
         ) as? [String: Any] else { throw ToolError("Failed to encode timeline") }
+
+        // Apply multicam filtering so the agent only sees clips assigned to the active source.
+        if editor.multicamEngine.isActive {
+            let visible = editor.visibleTracks
+            if let data = try? JSONEncoder().encode(visible),
+               let encoded = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+                dict["tracks"] = encoded
+            }
+        }
+
         if var tracks = dict["tracks"] as? [[String: Any]] {
             for i in tracks.indices {
                 tracks[i] = Self.compactTrack(tracks[i], window: window)

@@ -323,7 +323,7 @@ final class TimelineView: NSView {
         let linkOffsets = editor.linkGroupOffsets()
 
         clipDisplayRects.removeAll(keepingCapacity: true)
-        for (ti, track) in editor.timeline.tracks.enumerated() {
+        for (ti, track) in editor.visibleTracks.enumerated() {
             for clip in track.clips {
                 let isSelected = editor.selectedClipIds.contains(clip.id)
                 let clipMissing = editor.isClipMediaOffline(clip)
@@ -531,7 +531,7 @@ final class TimelineView: NSView {
 
     private func syncGeneratingClipOverlays(geometry geo: TimelineGeometry) {
         var active: [String: NSRect] = [:]
-        for (ti, track) in editor.timeline.tracks.enumerated() {
+        for (ti, track) in editor.visibleTracks.enumerated() {
             for clip in track.clips
                 where editor.pendingReplacements.contains(clip.id) || editor.isClipMediaGenerating(clip) {
                 active[clip.id] = clipDisplayRects[clip.id] ?? geo.clipRect(for: clip, trackIndex: ti)

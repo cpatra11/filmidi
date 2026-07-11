@@ -27,11 +27,13 @@ extension EditorViewModel {
             openTimelineIds.append(activeTimelineId)
         }
         restoreActiveViewState()
+        if let tl = timeline(for: activeTimelineId) { syncMulticamFromTimeline(tl) }
     }
 
     /// Snapshot for save/export; view states pruned to timelines that still exist.
     func projectFileSnapshot() -> ProjectFile {
         stashActiveViewState()
+        syncMulticamToActiveTimeline()
         let ids = Set(timelines.map(\.id))
         return ProjectFile(
             timelines: timelines,
@@ -65,11 +67,15 @@ extension EditorViewModel {
         guard id != activeTimelineId, timelines.contains(where: { $0.id == id }) else { return }
         revertInFlightDrag()
         stashActiveViewState()
+        // Persist current multicam state to the outgoing timeline
+        syncMulticamToActiveTimeline()
         if isPlaying { pause() }
         clearTimelineScopedState()
         activeTimelineId = id
         if !openTimelineIds.contains(id) { openTimelineIds.append(id) }
         timelineRenderRevision &+= 1
+        // Restore multicam state for the incoming timeline
+        if let tl = timeline(for: id) { syncMulticamFromTimeline(tl) }
         restoreActiveViewState()
         // refreshVisuals would apply the new timeline to the old track mappings — rebuild alone is correct.
         notifyTimelineChanged(refreshVisuals: false)
