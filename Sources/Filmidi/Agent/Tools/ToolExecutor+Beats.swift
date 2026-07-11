@@ -14,6 +14,7 @@ extension ToolExecutor {
             throw ToolError("Media file not on disk: \(asset.url.lastPathComponent)")
         }
 
+        onProgress?("Analyzing audio for beats…")
         // Use shared cache to prevent duplicate beat detection.
         let analysis = try await editor.mediaVisualCache.beats.detect(for: asset).value
 

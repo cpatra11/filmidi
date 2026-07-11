@@ -20,6 +20,7 @@ final class ToolExecutor {
     private var agentUndoStack: [String] = []
     var feedbackState = FeedbackState()
     var lastTranscriptContext: TranscriptionToolContext?
+    var onProgress: ((String) -> Void)?
 
     func execute(name: String, args: [String: Any]) async -> ToolResult {
         guard let tool = ToolName(rawValue: name) else {
@@ -132,6 +133,8 @@ final class ToolExecutor {
         case .removeMulticamSource: return try removeMulticamSource(editor, args: args)
         case .renameMulticamSource: return try renameMulticamSource(editor, args: args)
         case .assignClipToSource: return try assignClipToSource(editor, args: args)
+        case .detectBeats:   return try await detectBeats(editor, args)
+        case .denoiseAudio:  return try denoiseAudio(editor, args)
         case .getProjects, .openProject, .newProject:
             return await runProjectTool(tool, args)
         }

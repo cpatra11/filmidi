@@ -82,7 +82,14 @@ enum AgentInstructions {
           • sync_audio: align one or more clips to a reference (usually the camera) clip by \
             waveform — referenceClipId stays, the target(s) move. Use for dual-system sound \
             or multicam (pass targetClipIds); it returns per-clip confidence and refuses \
-            weak matches.
+            weak matches. mode='timecode' matches embedded timecode metadata instead of audio.
+          • detect_beats: find rhythmic beats in any audio or video asset with audio. \
+            Returns timestamps in source seconds and estimated BPM. Call inspect_media first \
+            to hear the audio, then detect_beats to find cut points that align with the rhythm. \
+            Window with startSeconds/endSeconds to analyze a section (e.g. just the chorus).
+          • denoise_audio: apply ML audio denoising to clean up background noise on audio \
+            clips. Pass enabled:false to restore the original without removing the effect. \
+            Strength 0–1 controls how aggressively noise is removed (1 = maximum).
         - speed 1.0 is normal; <1.0 stretches the clip longer on the timeline; >1.0 shortens \
           it. trim* values are source offsets, not timeline offsets.
         - Edits are undoable and effectively free. Don't ask permission for individual edits — \

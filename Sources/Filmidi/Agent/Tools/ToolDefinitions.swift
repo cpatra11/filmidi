@@ -54,6 +54,8 @@ enum ToolName: String, CaseIterable, Sendable {
     case removeMulticamSource = "remove_multicam_source"
     case renameMulticamSource = "rename_multicam_source"
     case assignClipToSource = "assign_clip_to_source"
+    case detectBeats = "detect_beats"
+    case denoiseAudio = "denoise_audio"
 }
 
 struct AgentTool: @unchecked Sendable {
@@ -408,12 +410,13 @@ enum ToolDefinitions {
         ),
         AgentTool(
             name: .syncAudio,
-            description: "Align one or more clips to a reference clip by cross-correlating audio and shifting targets on the timeline. referenceClipId stays put — use for dual-system sound (camera + external audio) or multicam. Returns offsetFrames and confidence (0–1) per target; refuses weak matches.",
+            description: "Align one or more clips to a reference clip by cross-correlating audio and shifting targets on the timeline. referenceClipId stays put — use for dual-system sound (camera + external audio) or multicam. Returns offsetFrames and confidence (0–1) per target; refuses weak matches. The mode parameter controls sync method: 'auto' tries audio cross-correlation then timecode; 'audio' uses waveform matching only; 'timecode' matches embedded timecode metadata.",
             inputSchema: objectSchema(
                 properties: [
                     "referenceClipId": ["type": "string", "description": "Clip the others align to. Stays put."],
                     "targetClipId": ["type": "string", "description": "Single clip to align. Use targetClipIds for several."],
                     "targetClipIds": ["type": "array", "items": ["type": "string"], "description": "Clips to align with the reference."],
+                    "mode": ["type": "string", "enum": ["auto", "audio", "timecode"], "description": "Optional. Sync method: 'auto' (default), 'audio' (waveform only), or 'timecode'."],
                     "searchWindowSeconds": ["type": "number", "description": "Max ± offset to search in seconds (default 30)."],
                     "minConfidence": ["type": "number", "description": "Minimum correlation confidence 0–1 (default 0.5)."],
                 ],
@@ -951,6 +954,30 @@ enum ToolDefinitions {
                     "sourceId": ["type": "string", "description": "The source ID from list_multicam_sources."],
                 ],
                 required: ["clipId", "sourceId"]
+            )
+        ),
+        AgentTool(
+            name: .detectBeats,
+            description: "Detect rhythmic beats and downbeats in an audio or video asset. Returns timestamps in source seconds, plus estimated BPM. Use to find edit points, align clips to music, or time cuts to a beat. The result contains 'beats' (strong rhythm points) and optionally 'downbeats' (accented first-beats of each measure). When BPM is stable, beats will be near-regular; irregular beats may indicate polyrhythms or silence. Window with startSeconds/endSeconds to analyze a section.",
+            inputSchema: objectSchema(
+                properties: [
+                    "mediaRef": ["type": "string", "description": "Asset ID from get_media. Audio or video with audio."],
+                    "startSeconds": ["type": "number", "description": "Optional. Analysis window start in source seconds."],
+                    "endSeconds": ["type": "number", "description": "Optional. Analysis window end in source seconds."],
+                ],
+                required: ["mediaRef"]
+            )
+        ),
+        AgentTool(
+            name: .denoiseAudio,
+            description: "Apply or disable machine-learning audio denoising on one or more audio clips. The denoise runs in the background and the preview picks it up automatically when it finishes. Pass enabled:false to restore the original audio without removing the effect. Undoable.",
+            inputSchema: objectSchema(
+                properties: [
+                    "clipIds": ["type": "array", "items": ["type": "string"], "description": "Audio clip IDs from get_timeline."],
+                    "enabled": ["type": "boolean", "description": "Optional. true (default) applies denoise; false restores original audio."],
+                    "strength": ["type": "number", "description": "Optional. Denoise amount 0–1 (default: 1 = maximum). Lower values preserve more ambient texture."],
+                ],
+                required: ["clipIds"]
             )
         ),
     ]
