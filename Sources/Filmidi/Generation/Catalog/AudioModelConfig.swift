@@ -8,9 +8,10 @@ struct AudioGenerationParams: Encodable, Sendable {
     let instrumental: Bool
     let durationSeconds: Int?
     var videoURL: String? = nil
+    var segments: String? = nil
 
     enum CodingKeys: String, CodingKey {
-        case kind, prompt, voice, lyrics, styleInstructions, instrumental, durationSeconds, videoURL
+        case kind, prompt, voice, lyrics, styleInstructions, instrumental, durationSeconds, videoURL, segments
     }
 
     func encode(to encoder: Encoder) throws {
@@ -23,6 +24,7 @@ struct AudioGenerationParams: Encodable, Sendable {
         try c.encode(instrumental, forKey: .instrumental)
         try c.encodeIfPresent(durationSeconds, forKey: .durationSeconds)
         try c.encodeIfPresent(videoURL, forKey: .videoURL)
+        try c.encodeIfPresent(segments, forKey: .segments)
     }
 }
 
@@ -75,6 +77,7 @@ struct AudioModelConfig: Identifiable, Sendable {
     var supportsLyrics: Bool { caps.supportsLyrics }
     var supportsInstrumental: Bool { caps.supportsInstrumental }
     var supportsStyleInstructions: Bool { caps.supportsStyleInstructions }
+    var supportsSegments: Bool { caps.supportsSegments ?? false }
     var durations: [Int]? { caps.durations }
     var minPromptLength: Int { caps.minPromptLength }
 

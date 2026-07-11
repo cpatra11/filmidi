@@ -278,6 +278,7 @@ extension ToolExecutor {
 
         let instrumental = args.bool("instrumental") ?? false
         let durationSeconds = args.int("duration") ?? spanSeconds.map { max(1, Int($0.rounded())) }
+        let segments = model.supportsSegments ? args.string("segments") : nil
         let params = AudioGenerationParams(
             prompt: prompt,
             voice: model.voices != nil ? (args.string("voice") ?? model.defaultVoice) : nil,
@@ -285,7 +286,8 @@ extension ToolExecutor {
             styleInstructions: model.supportsStyleInstructions ? args.string("styleInstructions") : nil,
             instrumental: model.supportsInstrumental ? instrumental : false,
             durationSeconds: durationSeconds,
-            videoURL: videoURL
+            videoURL: videoURL,
+            segments: segments
         )
         if let err = model.validate(params: params) {
             throw ToolError(err)

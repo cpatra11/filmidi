@@ -161,10 +161,15 @@ enum AgentInstructions {
           optional aspectRatio (defaults to Project / timeline size).
 
         # Audio generation
-        - Two categories, distinguished by model (see list_models type='audio'):
+        - Three categories, distinguished by model (see list_models type='audio'):
           • TTS: the prompt is the exact text to speak. Pass a `voice` the model supports; \
             some models accept `styleInstructions` for delivery (e.g. "warm and slow").
-          • Music: the prompt describes style, mood, and genre.
+          • Music: the prompt describes style, mood, and genre. Some music models accept \
+            a video source (sonilo-v1.1-video-to-music) — provide videoSourceStartFrame + \
+            videoSourceEndFrame; others are text-only (sonilo-v1.1-text-to-music). Sonilo \
+            models accept an optional `segments` JSON array for timed style changes.
+          • SFX: Mirelo models generate sound effects. mirelo-sfx-v1.5-text-to-sfx is \
+            text-only; mirelo-sfx-v1.5-video-to-audio accepts a video source.
         - Generated audio lands on an audio track. add_clips with trackIndex omitted \
           auto-creates one when none exists yet.
 

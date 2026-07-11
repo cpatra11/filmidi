@@ -237,6 +237,10 @@ enum EditSubmitter {
             if let err = audioModel.validate(params: params) {
                 throw RerunError.invalid(err)
             }
+            let ext: String
+            if modelId.hasPrefix("sonilo-") { ext = "aac" }
+            else if modelId.hasPrefix("mirelo-") { ext = "wav" }
+            else { ext = "mp3" }
             return editor.generationService.generate(
                 genInput: gen,
                 assetType: .audio,
@@ -246,7 +250,7 @@ enum EditSubmitter {
                 name: rerunName(for: asset),
                 folderId: asset.folderId,
                 buildParams: { _ in .audio(params) },
-                fileExtension: "mp3",
+                fileExtension: ext,
                 projectURL: editor.projectURL,
                 editor: editor,
                 onComplete: onComplete,

@@ -10,6 +10,12 @@ struct AudioGenerationSubmission {
     let references: [MediaAsset]
     let trimmedSourceOverride: TrimmedSource?
 
+    var fileExtension: String {
+        if model.id.hasPrefix("sonilo-") { return "aac" }
+        if model.id.hasPrefix("mirelo-") { return "wav" }
+        return "mp3"
+    }
+
     @MainActor
     @discardableResult
     func submit(
@@ -34,7 +40,7 @@ struct AudioGenerationSubmission {
                 }
                 return .audio(resolvedParams)
             },
-            fileExtension: "mp3",
+            fileExtension: fileExtension,
             projectURL: projectURL,
             editor: editor,
             onComplete: onComplete,

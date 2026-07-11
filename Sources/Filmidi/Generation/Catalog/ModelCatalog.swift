@@ -328,9 +328,22 @@ final class ModelCatalog {
                     category: "music",
                     voices: nil, defaultVoice: nil,
                     supportsLyrics: false, supportsInstrumental: false,
-                    supportsStyleInstructions: false,
+                    supportsStyleInstructions: false, supportsSegments: true,
                     durations: nil, minPromptLength: 1,
-                    inputs: ["video"], promptLabel: nil, minSeconds: nil, maxSeconds: nil
+                    inputs: ["video"], promptLabel: nil, minSeconds: 5, maxSeconds: 360
+                )),
+                audioPricing: .perSecond(rate: 30), paidOnly: false
+            ),
+            CatalogEntry(
+                id: "sonilo-v1.1-text-to-music", kind: .audio, displayName: "Sonilo Text to Music v1.1",
+                allowedEndpoints: ["sonilo"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "music",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: false, supportsInstrumental: true,
+                    supportsStyleInstructions: false, supportsSegments: true,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["text"], promptLabel: "Describe the music", minSeconds: 5, maxSeconds: 360
                 )),
                 audioPricing: .perSecond(rate: 30), paidOnly: false
             ),
@@ -344,6 +357,19 @@ final class ModelCatalog {
                     supportsStyleInstructions: false,
                     durations: nil, minPromptLength: 1,
                     inputs: ["video"], promptLabel: "Describe the sound", minSeconds: nil, maxSeconds: nil
+                )),
+                audioPricing: .perSecond(rate: 20), paidOnly: false
+            ),
+            CatalogEntry(
+                id: "mirelo-sfx-v1.5-text-to-sfx", kind: .audio, displayName: "Mirelo Text to SFX v1.5",
+                allowedEndpoints: ["mirelo"], responseShape: .audio,
+                uiCapabilities: .audio(AudioCaps(
+                    category: "sfx",
+                    voices: nil, defaultVoice: nil,
+                    supportsLyrics: false, supportsInstrumental: false,
+                    supportsStyleInstructions: false,
+                    durations: nil, minPromptLength: 1,
+                    inputs: ["text"], promptLabel: "Describe the sound", minSeconds: nil, maxSeconds: nil
                 )),
                 audioPricing: .perSecond(rate: 20), paidOnly: false
             ),
@@ -593,6 +619,7 @@ struct AudioCaps: Decodable, Sendable {
     let supportsLyrics: Bool
     let supportsInstrumental: Bool
     let supportsStyleInstructions: Bool
+    var supportsSegments: Bool? = nil
     let durations: [Int]?
     let minPromptLength: Int
     let inputs: [String]? // "text" | "video"
