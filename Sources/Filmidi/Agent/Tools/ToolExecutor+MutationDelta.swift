@@ -183,4 +183,20 @@ extension ToolExecutor {
                 return a < b
             }
     }
+
+    static func extractMutationSummary(_ resultJSON: String) -> String? {
+        guard let data = resultJSON.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        let clips = (obj["clips"] as? [[String: Any]])?.count ?? 0
+        let shifts = (obj["shifted"] as? [[String: Any]])?.count ?? 0
+        let removed = (obj["removedClipIds"] as? [String])?.count ?? 0
+        let tracks = (obj["createdTracks"] as? [[String: Any]])?.count ?? 0
+        var parts: [String] = []
+        if clips > 0 { parts.append("\(clips) clips changed") }
+        if shifts > 0 { parts.append("\(shifts) shifted") }
+        if removed > 0 { parts.append("\(removed) removed") }
+        if tracks > 0 { parts.append("\(tracks) tracks created") }
+        guard !parts.isEmpty else { return nil }
+        return parts.joined(separator: ", ")
+    }
 }

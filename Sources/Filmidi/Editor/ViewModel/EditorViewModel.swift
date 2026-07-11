@@ -189,6 +189,10 @@ final class EditorViewModel {
         multicamEngine.filteredTracks(timeline.tracks)
     }
 
+    func timelineContextSummary() -> String {
+        "Timeline: \(timeline.totalFrames)f · \(timeline.tracks.count) tracks · \(timeline.fps) fps · frame \(currentFrame) · timeline \"\(timeline.name)\" (\(activeTimelineId.prefix(8)))"
+    }
+
     let generationService = GenerationService()
     let agentService = AgentService()
 

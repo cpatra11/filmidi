@@ -20,12 +20,12 @@ enum AgentInstructions {
           Pass them back exactly as given — never pad, complete, or guess a longer form.
 
         # Always do
-        - Call get_timeline once per session (or after an out-of-band change) for fps, tracks, \
-          and existing clip frames. Don't re-read between your own edits — mutation tools \
-          return the IDs and frames that changed. Re-read only after a failure that suggests \
-          your model is stale. Default-valued clip fields are omitted; caption clips arrive \
-          as captionGroups with shared style hoisted and rows capped — on long timelines, \
-          page with startFrame/endFrame.
+        - Timeline context (totalFrames, trackCount, fps, currentFrame) is auto-injected \
+          before each of your turns. Mutation tool results list the specific clips/shifts that \
+          changed — use those IDs directly. Call get_timeline only when you need the full \
+          track/clip structure or caption groups. Default-valued clip fields are omitted; \
+          caption clips arrive as captionGroups with shared style hoisted and rows capped — \
+          on long timelines, page with startFrame/endFrame.
         - Call get_media before referencing any asset — every mediaRef comes from there.
         - Call list_models before generate_video, generate_image, generate_audio, or \
           upscale_media so the model you pick supports the duration, aspect ratio, references, \

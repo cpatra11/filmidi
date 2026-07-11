@@ -7,6 +7,15 @@ final class AgentService {
 
     private(set) var configRevision: UInt = 0
     private(set) var toolProgress: String?
+
+    struct EditLogEntry: Sendable {
+        let turn: Int
+        let tool: String
+        let summary: String
+    }
+    private(set) var editorLog: [EditLogEntry] = []
+    private var turnCount: Int = 0
+
     private var apiKeyObserver: NSObjectProtocol?
     private var modeObserver: NSObjectProtocol?
 
@@ -238,6 +247,8 @@ final class AgentService {
         mentions.removeAll()
         streamError = nil
         toolExecutor?.resetFeedbackState()
+        editorLog.removeAll()
+        turnCount = 0
     }
 
     func newChat() {
@@ -254,6 +265,8 @@ final class AgentService {
         messages = []
         streamError = nil
         toolExecutor?.resetFeedbackState()
+        editorLog.removeAll()
+        turnCount = 0
         onSessionsChanged?()
     }
 
@@ -452,6 +465,10 @@ final class AgentService {
             executor.onProgress = nil
             toolProgress = nil
             resultBlocks.append(.toolResult(toolUseId: use.id, content: result.content, isError: result.isError))
+            if let summary = ToolExecutor.extractMutationSummary(result.content.compactMap { if case .text(let s) = $0 { return s }; return nil }.joined()) {
+                turnCount += 1
+                editorLog.append(EditLogEntry(turn: turnCount, tool: use.name, summary: summary))
+            }
         }
         if !resultBlocks.isEmpty {
             messages.append(AgentMessage(role: .user, blocks: resultBlocks))
@@ -531,9 +548,58 @@ final class AgentService {
 
     private func apiMessages() async -> [AnthropicMessage] {
         var result: [AnthropicMessage] = []
-        for msg in messages {
+
+        var latestTimelineIdx = -1
+        var latestTranscriptIdx = -1
+        for (i, msg) in messages.enumerated() where msg.role != .system {
+            for block in msg.blocks {
+                guard case .toolResult(_, let content, _) = block else { continue }
+                let text = content.compactMap { if case .text(let s) = $0 { return s }; return nil }.joined()
+                if Self.isTimelineResult(text) { latestTimelineIdx = i }
+                if Self.isTranscriptResult(text) { latestTranscriptIdx = i }
+            }
+        }
+
+        var needsContext = false
+        for (i, msg) in messages.enumerated() {
             if msg.role == .system { continue }
-            var content = msg.blocks.compactMap(Self.contentBlockJSON)
+
+            let isToolResultMsg = msg.role == .user && msg.blocks.contains(where: {
+                if case .toolResult = $0 { return true }; return false
+            })
+
+            var content: [[String: Any]] = []
+
+            if msg.role == .assistant && needsContext {
+                if let summary = editor?.timelineContextSummary() {
+                    content.append(["type": "text", "text": summary])
+                }
+                needsContext = false
+            }
+
+            for block in msg.blocks {
+                switch block {
+                case .text:
+                    if let json = Self.contentBlockJSON(block) { content.append(json) }
+                case .toolUse:
+                    if let json = Self.contentBlockJSON(block) { content.append(json) }
+                case .toolResult(let toolUseId, let blockContent, let isError):
+                    let isOld = i < messages.count - 2
+                    let deduped: [ToolResult.Block]
+                    if isOld, i != latestTimelineIdx, Self.hasTimelineJSON(blockContent) {
+                        deduped = [.text(Self.timelineMarker(blockContent))]
+                    } else if isOld, i != latestTranscriptIdx, Self.hasTranscriptContent(blockContent) {
+                        deduped = [.text("[Transcript from earlier turn — use get_transcript for current state.]")]
+                    } else {
+                        deduped = blockContent
+                    }
+                    let dedupedBlock = AgentContentBlock.toolResult(toolUseId: toolUseId, content: deduped, isError: isError)
+                    if let json = Self.contentBlockJSON(dedupedBlock) { content.append(json) }
+                }
+            }
+
+            if isToolResultMsg { needsContext = true }
+
             if msg.role == .user, !msg.mentions.isEmpty {
                 let inlined = await inlineImageBlocks(for: msg.mentions)
                 var hint = msg.contextHint ?? AgentMentionContext.hint(msg.mentions, editor: editor)
@@ -541,10 +607,53 @@ final class AgentService {
                 content.insert(contentsOf: inlined.blocks, at: 0)
                 content.insert(["type": "text", "text": hint], at: 0)
             }
+
             guard !content.isEmpty else { continue }
             result.append(AnthropicMessage(role: msg.role == .user ? .user : .assistant, content: content))
         }
+
+        if !editorLog.isEmpty, let last = result.indices.last {
+            let logText = "# Edit history\n" + editorLog.suffix(12).map {
+                "- [\($0.turn)] \($0.tool): \($0.summary)"
+            }.joined(separator: "\n")
+            result[last].content.insert(["type": "text", "text": logText], at: 0)
+        }
+
         return result
+    }
+
+    private static func isTimelineResult(_ text: String) -> Bool {
+        guard let data = text.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return false }
+        return obj["tracks"] is [[String: Any]]
+    }
+
+    private static func isTranscriptResult(_ text: String) -> Bool {
+        guard let data = text.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return false }
+        return obj["wordFormat"] is String
+    }
+
+    private static func hasTimelineJSON(_ content: [ToolResult.Block]) -> Bool {
+        let text = content.compactMap { if case .text(let s) = $0 { return s }; return nil }.joined()
+        return isTimelineResult(text)
+    }
+
+    private static func hasTranscriptContent(_ content: [ToolResult.Block]) -> Bool {
+        let text = content.compactMap { if case .text(let s) = $0 { return s }; return nil }.joined()
+        return isTranscriptResult(text)
+    }
+
+    private static func timelineMarker(_ content: [ToolResult.Block]) -> String {
+        let text = content.compactMap { if case .text(let s) = $0 { return s }; return nil }.joined()
+        guard let data = text.data(using: .utf8),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return "[Timeline read earlier — call get_timeline for current state.]"
+        }
+        let frames = obj["totalFrames"] as? Int ?? 0
+        let tracks = (obj["tracks"] as? [[String: Any]])?.count ?? 0
+        let clips = (obj["tracks"] as? [[String: Any]])?.reduce(0) { $0 + (($1["clips"] as? [[String: Any]])?.count ?? 0) } ?? 0
+        return "[Timeline: \(frames)f · \(tracks) tracks · \(clips) clips — read earlier. Call get_timeline for current state.]"
     }
 
     private func inlineImageBlocks(for mentions: [AgentMention]) async -> AgentMentionContext.InlinedMentions {

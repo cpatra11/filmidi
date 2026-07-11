@@ -33,7 +33,7 @@ enum AnthropicStopReason: String, Sendable {
 struct AnthropicMessage: @unchecked Sendable {
     enum Role: String, Sendable { case user, assistant }
     let role: Role
-    let content: [[String: Any]]
+    var content: [[String: Any]]
 }
 
 struct AnthropicToolSchema: @unchecked Sendable {
