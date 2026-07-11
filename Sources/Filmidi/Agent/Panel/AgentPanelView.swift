@@ -217,7 +217,7 @@ struct AgentPanelView: View {
                 LazyVStack(alignment: .leading, spacing: AppTheme.Spacing.xl) {
                     let results = toolResults
                     ForEach(service.messages) { msg in
-                        AgentMessageView(message: msg, toolResults: results)
+                        AgentMessageView(message: msg, toolResults: results, toolProgress: service.toolProgress)
                             .id(msg.id)
                     }
                     if service.isStreaming {

@@ -6,6 +6,7 @@ import Observation
 final class AgentService {
 
     private(set) var configRevision: UInt = 0
+    private(set) var toolProgress: String?
     private var apiKeyObserver: NSObjectProtocol?
     private var modeObserver: NSObjectProtocol?
 
@@ -445,7 +446,11 @@ final class AgentService {
                 resultBlocks.append(.toolResult(toolUseId: use.id, content: [.text("Cancelled")], isError: true))
                 continue
             }
+            toolProgress = "Running \(use.name)…"
+            executor.onProgress = { [weak self] msg in self?.toolProgress = msg }
             let result = await executor.execute(name: use.name, args: Self.parseJSONObject(use.input))
+            executor.onProgress = nil
+            toolProgress = nil
             resultBlocks.append(.toolResult(toolUseId: use.id, content: result.content, isError: result.isError))
         }
         if !resultBlocks.isEmpty {

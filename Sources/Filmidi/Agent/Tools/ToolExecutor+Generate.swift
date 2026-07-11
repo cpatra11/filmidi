@@ -248,6 +248,7 @@ extension ToolExecutor {
             guard let fileURL = editor.mediaResolver.resolveURL(for: videoAsset.id) else {
                 throw ToolError("Could not read the video source file.")
             }
+            onProgress?("Uploading video reference…")
             videoURL = try await GenerationBackend.uploadReference(fileURL: fileURL, contentType: "video/mp4")
             spanSeconds = videoAsset.duration
         } else if let start = args.int("videoSourceStartFrame"), let end = args.int("videoSourceEndFrame") {
@@ -264,6 +265,7 @@ extension ToolExecutor {
                 shortSide: 360, includeAudio: false
             )
             defer { try? FileManager.default.removeItem(at: mp4) }
+            onProgress?("Uploading rendered video…")
             videoURL = try await GenerationBackend.uploadReference(fileURL: mp4, contentType: "video/mp4")
             spanSeconds = Double(end - start) / Double(max(1, editor.timeline.fps))
             placementStartFrame = start

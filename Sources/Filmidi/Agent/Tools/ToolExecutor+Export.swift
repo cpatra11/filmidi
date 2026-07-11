@@ -108,6 +108,7 @@ extension ToolExecutor {
     }
 
     private func exportXML(_ editor: EditorViewModel, outputURL: URL) async throws -> ToolResult {
+        onProgress?("Exporting XML…")
         if FileManager.default.fileExists(atPath: outputURL.path) {
             do {
                 try FileManager.default.removeItem(at: outputURL)
@@ -137,6 +138,7 @@ extension ToolExecutor {
     }
 
     private func exportFCPXML(_ editor: EditorViewModel, target: FCPXMLTarget, outputURL: URL) async throws -> ToolResult {
+        onProgress?("Exporting FCPXML…")
         if FileManager.default.fileExists(atPath: outputURL.path) {
             do {
                 try FileManager.default.removeItem(at: outputURL)
@@ -167,6 +169,7 @@ extension ToolExecutor {
     }
 
     private func exportFilmidi(_ editor: EditorViewModel, outputURL: URL) async throws -> ToolResult {
+        onProgress?("Exporting Filmidi project…")
         guard ExportCoordinator.beginExportIfIdle() else {
             throw ToolError("export_project: Another export is already in progress.")
         }

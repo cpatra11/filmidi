@@ -34,6 +34,7 @@ extension ToolExecutor {
             maxWords = n
         }
 
+        onProgress?("Transcribing audio…")
         let context = try await transcriptionContext(args, path: "add_captions")
         let provider = context.provider
         if provider == .cloud {
@@ -57,6 +58,7 @@ extension ToolExecutor {
 
         try await Self.validateCloudTranscriptionAccess(for: request, in: editor)
 
+        onProgress?("Generating caption clips…")
         let ids = try await editor.generateCaptions(for: request)
         guard !ids.isEmpty else { throw ToolError("No speech detected to caption.") }
         let suffix = animation.isActive ? " (\(animation.preset.rawValue))" : ""

@@ -4,6 +4,7 @@ import SwiftUI
 struct AgentMessageView: View {
     let message: AgentMessage
     let toolResults: [String: ToolRunResult]
+    let toolProgress: String?
     @State private var isHovering = false
 
     var body: some View {
@@ -72,7 +73,7 @@ struct AgentMessageView: View {
                     MarkdownText(text: text)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 case .toolUse(let id, let name, let inputJSON):
-                    ToolRunRow(name: name, inputJSON: inputJSON, result: toolResults[id])
+                    ToolRunRow(name: name, inputJSON: inputJSON, result: toolResults[id], runningProgress: toolProgress)
                 case .toolResult:
                     EmptyView()
                 }
@@ -124,6 +125,7 @@ private struct ToolRunRow: View {
     let name: String
     let inputJSON: String
     let result: ToolRunResult?
+    let runningProgress: String?
     @State private var expanded = false
 
     private var isRunning: Bool { result == nil }
@@ -155,6 +157,13 @@ private struct ToolRunRow: View {
                         .font(.system(size: AppTheme.FontSize.sm, weight: .medium, design: .monospaced))
                         .foregroundStyle(AppTheme.Text.tertiaryColor)
                         .opacity(isRunning ? 0.7 : 1.0)
+                    if let p = runningProgress, isRunning {
+                        Text(p)
+                            .font(.system(size: AppTheme.FontSize.xs))
+                            .foregroundStyle(AppTheme.Text.mutedColor)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
                     Image(systemName: "chevron.right")
                         .font(.system(size: AppTheme.FontSize.micro, weight: .semibold))
                         .rotationEffect(.degrees(expanded ? 90 : 0))
